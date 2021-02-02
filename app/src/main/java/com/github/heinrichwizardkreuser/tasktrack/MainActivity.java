@@ -48,10 +48,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // add data objects
-        //ArrayList<TrackerData> trackerDataList = generateTrackerData();
-        //saveTrackerData(trackerDataList);
+        //saveTrackerData(generateTrackerData());
+
         ArrayList<TrackerData> trackerDataList = loadTrackerData();
 
 
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String trackerDataListFilePath = "trackerDataListFilePath";
 
-    private void saveTrackerData(ArrayList<TrackerData> trackerDataList) {
+    public void saveTrackerData(ArrayList<TrackerData> trackerDataList) {
         try {
             FileOutputStream fileOut = getApplicationContext().openFileOutput(
                     trackerDataListFilePath,
@@ -119,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<TrackerData> generateTrackerData() {
         ArrayList<TrackerData> trackerDataList = new ArrayList<TrackerData>();
-        trackerDataList.add(new TrackerData("Email", android.R.drawable.ic_dialog_email));
-        trackerDataList.add(new TrackerData("Info", android.R.drawable.ic_dialog_info));
+        trackerDataList.add(new TrackerData("Email"));
+        trackerDataList.add(new TrackerData("Info"));
         return trackerDataList;
         //TrackerData[] myListData = new TrackerData[] {
         //        new TrackerData("Email", android.R.drawable.ic_dialog_email),

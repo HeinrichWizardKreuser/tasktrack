@@ -46,6 +46,7 @@ public class TrackerAdapter
     public void onBindViewHolder(ViewHolder holder, int position) {
         final TrackerData myListData = trackerDataList.get(position);
         holder.editText.setText(trackerDataList.get(position).getDescription());
+        holder.trackerData = myListData;
         //holder.imageView.setImageResource(trackerDataList.get(position).getImgId());
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +65,7 @@ public class TrackerAdapter
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //public ImageView imageView;
         public EditText editText;
+        public TrackerData trackerData;
         //public LinearLayout linearLayout;
         public RelativeLayout relativeLayout;
         public FloatingActionButton playButton;
@@ -80,6 +82,10 @@ public class TrackerAdapter
             playButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    //Toast.makeText(itemView.getContext(),
+                    //        "trackerData null: " + (trackerData == null), Toast.LENGTH_LONG).show();
+
                     if (paused) {
                         // start playing
                         chronometer.start();
@@ -91,6 +97,10 @@ public class TrackerAdapter
                         chronometer.stop();
                         paused = true;
                         playButton.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.ic_baseline_play_arrow_24));
+
+                        // save the time
+                        trackerData.setElapsedTime(chronometer.getCurrentTime());
+                        //TODO: write to DB
                     }
                 }
             });
@@ -114,4 +124,3 @@ public class TrackerAdapter
         }
     }
 }
-

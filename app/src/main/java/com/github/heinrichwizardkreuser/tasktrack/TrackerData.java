@@ -5,17 +5,15 @@ import java.io.Serializable;
 public class TrackerData implements Serializable {
 
 
-    public TrackerData(String description, int imgId) {
+    public TrackerData(String description) {
         this.description = description;
-        this.imgId = imgId;
     }
-
-    private int imgId;
-    public int getImgId() { return imgId; }
-    public void setImgId(int imgId) { this.imgId = imgId; }
 
     private String description;
     public String getDescription() { return description; }
     public void setDescription(String d) { this.description = d; }
 
+    private long elapsedTime;
+    public long getElapsedTime() { return elapsedTime; }
+    public void setElapsedTime(long elapsedTime) { this.elapsedTime = elapsedTime; }
 }
