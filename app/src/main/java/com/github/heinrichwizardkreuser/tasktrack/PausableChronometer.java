@@ -1,0 +1,54 @@
+package com.github.heinrichwizardkreuser.tasktrack;
+
+import android.content.Context;
+import android.os.SystemClock;
+import android.util.AttributeSet;
+import android.widget.Chronometer;
+
+/**
+ * Credit to https://stackoverflow.com/users/2301185/blufenix who posted this on
+ * https://stackoverflow.com/questions/7359856/check-if-chronometer-is-running
+ */
+public class PausableChronometer extends Chronometer {
+
+    private long timeWhenStopped = 0;
+
+    public PausableChronometer(Context context) {
+        super(context);
+    }
+
+    public PausableChronometer(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public PausableChronometer(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    @Override
+    public void start() {
+        setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
+        super.start();
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        timeWhenStopped = SystemClock.elapsedRealtime() - getBase();
+    }
+
+    public void reset() {
+        stop();
+        setBase(SystemClock.elapsedRealtime());
+        timeWhenStopped = 0;
+    }
+
+    public long getCurrentTime() {
+        return timeWhenStopped;
+    }
+
+    public void setCurrentTime(long time) {
+        timeWhenStopped = time;
+        setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
+    }
+}
