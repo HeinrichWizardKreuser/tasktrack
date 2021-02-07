@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
   public static Context appContext;
   private static TrackerStorage trackerStorage;
+  private static TrackerAdapter adapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +49,32 @@ public class MainActivity extends AppCompatActivity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
-
+        //create a new tracker
+        // iterate over all trackers and check if name is taken
+        int mx = 1;
+        for (TrackerData trackerData : trackerStorage.trackerDataList) {
+          String name = trackerData.getDescription();
+          if (name.startsWith("Tracker ")) {
+            int v = 0;
+            try {
+              v = Integer.parseInt(name.substring("Tracker ".length()));
+              if (v > mx) {
+                mx = v;
+              }
+            } catch (Exception e) {
+              continue;
+            }
+          }
+        }
+        String newName = String.format("Tracker %d", mx + 1);
+        //generate a new tracker with this name
+        TrackerData newTracker = new TrackerData(newName);
+        // add to list
+        trackerStorage.trackerDataList.add(newTracker);
+        // add to recycler view
+        adapter.notifyItemInserted(adapter.getItemCount());
+        //save to db
+        saveTrackerData();
       }
     });
 
@@ -62,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     // add all of the TrackerData to recyclerview
     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-    TrackerAdapter adapter = new TrackerAdapter(trackerStorage.trackerDataList);
+    adapter = new TrackerAdapter(trackerStorage.trackerDataList);
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     recyclerView.setAdapter(adapter);
