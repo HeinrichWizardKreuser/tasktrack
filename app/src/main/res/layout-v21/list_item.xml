@@ -69,7 +69,6 @@
         android:layout_marginBottom="13dp"
         android:background="@null"
         android:outlineProvider="none"
-        android:onClick="threeDotsOnClick"
         app:backgroundTint="@android:color/transparent"
         app:maxImageSize="48dp"
         app:srcCompat="@drawable/ic_baseline_more_vert_24" />
