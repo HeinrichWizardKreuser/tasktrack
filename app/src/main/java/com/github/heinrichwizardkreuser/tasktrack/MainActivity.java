@@ -103,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
   }
 
-  //fab_more_vert
-
   private void populate() {
     // delete the file
     ArrayList<TrackerData> trackerDataList = new ArrayList<TrackerData>();
@@ -154,10 +152,19 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  /*called on a specific timer when the three dots are called*/
-  public void threeDotsOnClick(View view) {
-    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        .setAction("Action", null).show();
+  public static boolean delete(TrackerData trackerData) {
+    // get index of object
+    int index = trackerStorage.trackerDataList.indexOf(trackerData);
+    if (index == -1) {
+      return false;
+    }
+    // remove from storage
+    trackerStorage.trackerDataList.remove(index);
+    // remove from recycler view
+    adapter.notifyItemRemoved(index);
+    // save changes to db
+    saveTrackerData();
+    return true;
   }
 
   @Override
