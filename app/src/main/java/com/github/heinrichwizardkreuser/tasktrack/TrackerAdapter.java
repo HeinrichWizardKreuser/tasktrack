@@ -2,8 +2,12 @@ package com.github.heinrichwizardkreuser.tasktrack;
 
 import android.content.Context;
 import android.os.Build;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 //import android.widget.ImageView;
@@ -11,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Chronometer;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.EditText;
@@ -69,27 +74,70 @@ public class TrackerAdapter
     //public LinearLayout linearLayout;
     public RelativeLayout relativeLayout;
     public FloatingActionButton playButton;
+    public FloatingActionButton options;
     public boolean paused = true;
     public PausableChronometer chronometer;
     public ViewHolder(View itemView) {
       super(itemView);
       //this.imageView = (ImageView) itemView.findViewById(R.id.imageView);
       this.editText = (EditText) itemView.findViewById(R.id.editText);
-      relativeLayout = (RelativeLayout)itemView.findViewById(
-          R.id.relativeLayout);
-      this.chronometer = (PausableChronometer)itemView.findViewById(
-        R.id.chronometer);
-      this.playButton = (FloatingActionButton)itemView.findViewById(
-        R.id.fab_play);
+      this.relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
+      this.chronometer = (PausableChronometer)itemView.findViewById(R.id.chronometer);
+      this.playButton = (FloatingActionButton)itemView.findViewById(R.id.fab_play);
+      this.options = (FloatingActionButton)itemView.findViewById(R.id.fab_more_vert);
+      this.options.setOnClickListener(new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        public void onClick(View v) {
+          PopupMenu popup = new PopupMenu(v.getContext(), v, Gravity.END);
+          MenuInflater inflater = popup.getMenuInflater();
+          inflater.inflate(R.menu.tracker_menu, popup.getMenu());
+          popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+              int id = item.getItemId();
+              switch (id) {
+                case R.id.action_reset: {
+                  //TODO: update to Toast maybe?
+                  Snackbar.make(v, "Timer '" + trackerData.getDescription() + "' reset to 0",
+                          Snackbar.LENGTH_LONG)
+                          .setAction("Action", null).show();
+                  trackerData.setElapsedTime(0l);
+                  chronometer.setCurrentTime(0l);
+                  MainActivity.saveTrackerData();
+                  break;
+                }
+                case R.id.action_archive: {
+                  Snackbar.make(v, "Archived timer '" + trackerData.getDescription() + "'",
+                          Snackbar.LENGTH_LONG)
+                          .setAction("Action", null).show();
+                  break;
+                }
+                case R.id.action_delete: {
+                  boolean deleted = MainActivity.delete(trackerData);
+                  if (deleted) {
+                    Snackbar.make(v, "Deleted timer '" + trackerData.getDescription() + "'",
+                            Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                  } else {
+                    Snackbar.make(v,
+                            "Could not delete timer '" + trackerData.getDescription() + "'",
+                            Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                  }
+                  break;
+                }
+              }
+              return false;
+            }
+          });
+          popup.show();
+        }
+      });
+
       playButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
-          //Toast.makeText(
-          //  itemView.getContext(),
-          //   "trackerData null: " + (trackerData == null),
-          //   Toast.LENGTH_LONG).show();
-
           if (paused) {
             // start playing
             chronometer.start();
@@ -102,10 +150,8 @@ public class TrackerAdapter
             paused = true;
             playButton.setImageDrawable(ContextCompat.getDrawable(
               view.getContext(), R.drawable.ic_baseline_play_arrow_24));
-
             // save the time
             trackerData.setElapsedTime(chronometer.getCurrentTime());
-
             // write to DB
             MainActivity.saveTrackerData();
           }
