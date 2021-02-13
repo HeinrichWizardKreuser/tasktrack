@@ -17,4 +17,9 @@
         android:orderInCategory="100"
         android:title="Delete"
         />
+    <item
+        android:id="@+id/action_edit"
+        android:orderInCategory="100"
+        android:title="Edit"
+        />
 </menu>

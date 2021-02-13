@@ -1,8 +1,12 @@
 package com.github.heinrichwizardkreuser.tasktrack;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.SystemClock;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -32,6 +36,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class TrackerAdapter
     extends RecyclerView.Adapter<TrackerAdapter.ViewHolder>
@@ -80,9 +86,6 @@ public class TrackerAdapter
       }
     }
     notifyItemMoved(fromPosition, toPosition);
-
-    Log.d("onRowMoved", fromPosition + " moved to " + toPosition);
-
     // update position in collection
     MainActivity.saveTrackerData();
   }
@@ -116,14 +119,13 @@ public class TrackerAdapter
     public FloatingActionButton playButton;
     public FloatingActionButton options;
     public boolean paused = true;
-    public PausableChronometer chronometer;
+    public BetterChronometer chronometer;
     public ViewHolder(View itemView) {
       super(itemView);
       this.rowView = itemView;
-      //this.imageView = (ImageView) itemView.findViewById(R.id.imageView);
       this.editText = (EditText) itemView.findViewById(R.id.editText);
       this.relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
-      this.chronometer = (PausableChronometer)itemView.findViewById(R.id.chronometer);
+      this.chronometer = (BetterChronometer)itemView.findViewById(R.id.chronometer);
       this.playButton = (FloatingActionButton)itemView.findViewById(R.id.fab_play);
       this.options = (FloatingActionButton)itemView.findViewById(R.id.fab_more_vert);
       this.options.setOnClickListener(new View.OnClickListener() {
@@ -167,6 +169,53 @@ public class TrackerAdapter
                   }
                   break;
                 }
+                case R.id.action_edit: {
+
+                  AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+
+                  EditText input = new EditText(v.getContext());
+
+                  builder.setView(input);
+                  input.setTextColor(Color.BLACK);
+                  input.setCursorVisible(true);
+                  input.setHint("HH:MM:SS.sss");
+                  input.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
+
+                  //android:inputType="time"
+                  //android:layout_width="match_parent"
+                  //android:layout_height="wrap_content"
+                  //android:hint="HH:MM:SS.sss"
+
+
+                  //builder.setView(R.layout.edit_time);
+
+                  builder.setCancelable(true);
+                  builder.setMessage("Write your message here.");
+                  builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                      //v.findViewById(R.layout.edit_time)
+                      //dialog.
+                      String text = input.getText().toString();
+
+                      Snackbar.make(v,
+                              text,
+                              Snackbar.LENGTH_LONG)
+                              .setAction("Action", null).show();
+                    }
+                  });
+                  builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                      dialog.cancel();
+                    }
+                  });
+                  AlertDialog dialog = builder.create();
+                  dialog.show();
+
+                  break;
+                }
+
               }
               return false;
             }
