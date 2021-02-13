@@ -22,7 +22,9 @@
         android:textSize="16sp"
         android:singleLine="true"
         android:imeOptions="actionDone"
-        android:background="@android:color/transparent" >
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/background_dark"
+        >
     </EditText>
 
     <com.github.heinrichwizardkreuser.tasktrack.PausableChronometer
@@ -39,7 +41,9 @@
         android:layout_marginBottom="16dp"
         android:gravity="center_vertical"
         android:layout_toEndOf="@+id/textView"
-        android:layout_toRightOf="@+id/textView" />
+        android:layout_toRightOf="@+id/textView"
+        android:textColor="@android:color/background_dark"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_play"

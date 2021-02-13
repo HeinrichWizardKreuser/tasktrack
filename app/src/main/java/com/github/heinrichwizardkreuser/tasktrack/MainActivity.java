@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -89,18 +90,13 @@ public class MainActivity extends AppCompatActivity {
     adapter = new TrackerAdapter(trackerStorage.trackerDataList);
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    // add callback for drag and drop
+    ItemTouchHelper.Callback callback = new ItemMoveCallback(adapter);
+    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+    touchHelper.attachToRecyclerView(recyclerView);
+
     recyclerView.setAdapter(adapter);
-
-    //FloatingActionButton fab_more_vert = findViewById(R.id.fab_more_vert);
-    //fab_more_vert.setOnClickListener(new View.OnClickListener() {
-    //    @Override
-    //    public void onClick(View view) {
-    //        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-    //                .setAction("Action", null).show();
-    //
-    //    }
-    //});
-
   }
 
   private void populate() {

@@ -17,8 +17,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.Tasktrack.PopupOverlay"
-
-
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -28,7 +26,6 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             android:id="@+id/recyclerView"
-            android:theme="@style/Theme.Tasktrack.AppBarOverlay"
             tools:context="com.github.heinrichwizardkreuser.tasktrack.MainActivity">
         </androidx.recyclerview.widget.RecyclerView>
 

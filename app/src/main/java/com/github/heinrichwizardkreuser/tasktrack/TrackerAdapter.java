@@ -1,7 +1,9 @@
 package com.github.heinrichwizardkreuser.tasktrack;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,9 +31,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class TrackerAdapter
-    extends RecyclerView.Adapter<TrackerAdapter.ViewHolder>{
+    extends RecyclerView.Adapter<TrackerAdapter.ViewHolder>
+    implements ItemMoveCallback.ItemTouchHelperContract {
 
   private ArrayList<TrackerData> trackerDataList;
 
@@ -53,7 +57,6 @@ public class TrackerAdapter
     holder.editText.setText(trackerDataList.get(position).getDescription());
     holder.trackerData = myListData;
     holder.chronometer.setCurrentTime(myListData.getElapsedTime());
-    //holder.imageView.setImageResource(trackerDataList.get(position).getImgId());
     holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -62,12 +65,49 @@ public class TrackerAdapter
     });
   }
 
+
+  /*DRAG AND DROP*/
+
+  @Override
+  public void onRowMoved(int fromPosition, int toPosition) {
+    if (fromPosition < toPosition) {
+      for (int i = fromPosition; i < toPosition; i++) {
+        Collections.swap(trackerDataList, i, i + 1);
+      }
+    } else {
+      for (int i = fromPosition; i > toPosition; i--) {
+        Collections.swap(trackerDataList, i, i - 1);
+      }
+    }
+    notifyItemMoved(fromPosition, toPosition);
+
+    Log.d("onRowMoved", fromPosition + " moved to " + toPosition);
+
+    // update position in collection
+    MainActivity.saveTrackerData();
+  }
+
+
+  @Override
+  public void onRowSelected(ViewHolder myViewHolder) {
+    myViewHolder.rowView.setBackgroundColor(Color.GRAY);
+  }
+
+  @Override
+  public void onRowClear(ViewHolder myViewHolder) {
+    myViewHolder.rowView.setBackgroundColor(Color.WHITE);
+
+  }
+
+
+
   @Override
   public int getItemCount() {
     return trackerDataList.size();
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
+    View rowView;
     //public ImageView imageView;
     public EditText editText;
     public TrackerData trackerData;
@@ -79,6 +119,7 @@ public class TrackerAdapter
     public PausableChronometer chronometer;
     public ViewHolder(View itemView) {
       super(itemView);
+      this.rowView = itemView;
       //this.imageView = (ImageView) itemView.findViewById(R.id.imageView);
       this.editText = (EditText) itemView.findViewById(R.id.editText);
       this.relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
@@ -98,7 +139,6 @@ public class TrackerAdapter
               int id = item.getItemId();
               switch (id) {
                 case R.id.action_reset: {
-                  //TODO: update to Toast maybe?
                   Snackbar.make(v, "Timer '" + trackerData.getDescription() + "' reset to 0",
                           Snackbar.LENGTH_LONG)
                           .setAction("Action", null).show();
