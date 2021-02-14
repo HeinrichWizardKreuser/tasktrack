@@ -31,11 +31,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements EditTimeDialog.EditTimeListener {
 
   public static Context appContext;
   private static TrackerStorage trackerStorage;
-  private static TrackerAdapter adapter;
+  public static TrackerAdapter adapter;
+  private static RecyclerView recyclerView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
     loadTrackerData();
 
     // add all of the TrackerData to recyclerview
-    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-    adapter = new TrackerAdapter(trackerStorage.trackerDataList);
+    recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+    adapter = new TrackerAdapter(trackerStorage.trackerDataList, getSupportFragmentManager());
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -183,5 +185,84 @@ public class MainActivity extends AppCompatActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  /******************************UPDATING TIME*********************************************/
+
+  @Override
+  public void applyTimeTexts(String timeText, BetterChronometer chronometer) {
+    //TODO: check for format "HH:MM:SS.sss"
+    char[] arr = timeText.toCharArray();
+    // "HH:MM:SS.sss"
+    //  01 34 67 901 check digits
+    //    2  5       check colons
+    if (arr.length < 8) {
+      timeEditError("Time too short");
+      return;
+    }
+    if (12 < arr.length) {
+      timeEditError("Time too long");
+      return;
+    }
+    //check all digits except millis
+    int[] digits = new int[]{0, 1, 3, 4, 6, 7};
+    for (int i : digits) {
+      if (!Character.isDigit(arr[i])) {
+        timeEditError("Time can only contain digits (0... 9)");
+        return;
+      }
+    }
+
+    // check millis
+    for (int i = 9; i < arr.length; i++) {
+      if (!Character.isDigit(arr[i])) {
+        timeEditError("Time can only contain digits (0... 9)");
+        return;
+      }
+    }
+    // check colons
+    if (arr[2] != ':' || arr[5] != ':') {
+      timeEditError("Missing colons (:)");
+      return;
+    }
+    // parse time
+    int hours = Integer.parseInt(timeText.substring(0, 2));
+    int minutes = Integer.parseInt(timeText.substring(3, 5));
+    int seconds = Integer.parseInt(timeText.substring(6, 8));
+    int milliseconds = Integer.parseInt(timeText.substring(9));
+    // check minute limits
+    if (60 <= minutes) {
+      timeEditError("Minutes may not exceed 60");
+      return;
+    }
+    // check seconds limits
+    if (60 <= seconds) {
+      timeEditError("Seconds may not exceed 60");
+      return;
+    }
+    //  now convert time to new time elapsed
+    long total = milliseconds +
+            seconds * 1000 +
+            minutes * 60 * 1000 +
+            hours * 60 * 60 * 1000;
+
+    //err("updating to " + hours + "h" + minutes + "m" + seconds + "s" + milliseconds + "ss" +
+    //        ": " + chronometer.getTimeElapsed() + "" +
+    //        ": " + total);
+
+
+    chronometer.setCurrentTime(total);
+
+    Snackbar.make(recyclerView,
+            "Updated Successfully",
+            Snackbar.LENGTH_LONG)
+            .setAction("Action", null).show();
+  }
+
+  private void timeEditError(String s) {
+    Snackbar.make(recyclerView,
+            "Error: " + s,
+            Snackbar.LENGTH_LONG)
+            .setAction("Action", null).show();
   }
 }

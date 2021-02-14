@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+//import android.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,12 +45,20 @@ public class TrackerAdapter
     extends RecyclerView.Adapter<TrackerAdapter.ViewHolder>
     implements ItemMoveCallback.ItemTouchHelperContract {
 
+  private FragmentManager fragmentManager;
   private ArrayList<TrackerData> trackerDataList;
 
-  // RecyclerView recyclerView;
-  public TrackerAdapter(ArrayList<TrackerData> trackerDataList) {
+  //// RecyclerView recyclerView;
+  //public TrackerAdapter(ArrayList<TrackerData> trackerDataList, FragmentManager fragmentManager) {
+  //  this.trackerDataList = trackerDataList;
+  //  this.fragmentManager = fragmentManager;
+  //}
+
+  public TrackerAdapter(ArrayList<TrackerData> trackerDataList, FragmentManager fragmentManager) {
     this.trackerDataList = trackerDataList;
+    this.fragmentManager = fragmentManager;
   }
+
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -62,6 +72,7 @@ public class TrackerAdapter
     final TrackerData myListData = trackerDataList.get(position);
     holder.editText.setText(trackerDataList.get(position).getDescription());
     holder.trackerData = myListData;
+    holder.fragmentManager = this.fragmentManager;
     holder.chronometer.setCurrentTime(myListData.getElapsedTime());
     holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -109,11 +120,16 @@ public class TrackerAdapter
     return trackerDataList.size();
   }
 
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  public static class ViewHolder
+          extends RecyclerView.ViewHolder
+          //implements EditTimeDialog.EditTimeListener
+  {
+
     View rowView;
     //public ImageView imageView;
     public EditText editText;
     public TrackerData trackerData;
+    public FragmentManager fragmentManager;
     //public LinearLayout linearLayout;
     public RelativeLayout relativeLayout;
     public FloatingActionButton playButton;
@@ -171,47 +187,8 @@ public class TrackerAdapter
                 }
                 case R.id.action_edit: {
 
-                  AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-
-                  EditText input = new EditText(v.getContext());
-
-                  builder.setView(input);
-                  input.setTextColor(Color.BLACK);
-                  input.setCursorVisible(true);
-                  input.setHint("HH:MM:SS.sss");
-                  input.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
-
-                  //android:inputType="time"
-                  //android:layout_width="match_parent"
-                  //android:layout_height="wrap_content"
-                  //android:hint="HH:MM:SS.sss"
-
-
-                  //builder.setView(R.layout.edit_time);
-
-                  builder.setCancelable(true);
-                  builder.setMessage("Write your message here.");
-                  builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                      //v.findViewById(R.layout.edit_time)
-                      //dialog.
-                      String text = input.getText().toString();
-
-                      Snackbar.make(v,
-                              text,
-                              Snackbar.LENGTH_LONG)
-                              .setAction("Action", null).show();
-                    }
-                  });
-                  builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                      dialog.cancel();
-                    }
-                  });
-                  AlertDialog dialog = builder.create();
-                  dialog.show();
+                  EditTimeDialog dialog = new EditTimeDialog(chronometer);
+                  dialog.show(fragmentManager, "");
 
                   break;
                 }
@@ -264,8 +241,8 @@ public class TrackerAdapter
           }
 
           // write to DB
-          Toast.makeText(v.getContext(), editText.getText(),
-             Toast.LENGTH_LONG).show();
+          //Toast.makeText(v.getContext(), editText.getText(),
+          //   Toast.LENGTH_LONG).show();
           trackerData.setDescription(editText.getText().toString());
 
           MainActivity.saveTrackerData();
@@ -273,5 +250,15 @@ public class TrackerAdapter
         }
       });
     }
+    //
+    //@Override
+    //public void applyTimeTexts(String timeText) {
+    //  //TODO: check for format "HH:MM:SS.sss"
+    //  Snackbar.make(itemView,
+    //          timeText,
+    //          Snackbar.LENGTH_LONG)
+    //          .setAction("Action", null).show();
+    //}
+
   }
 }
