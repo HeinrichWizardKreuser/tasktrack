@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+
         //create a new tracker
         // iterate over all trackers and check if name is taken
         int mx = 1;
@@ -75,7 +76,13 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
         // add to list
         trackerStorage.trackerDataList.add(newTracker);
         // add to recycler view
-        adapter.notifyItemInserted(adapter.getItemCount());
+        adapter.notifyDataSetChanged();
+
+        Snackbar.make(view,
+                "created new tracker",
+                Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
         //save to db
         saveTrackerData();
       }
@@ -88,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
     loadTrackerData();
 
     // add all of the TrackerData to recyclerview
-    recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+    recyclerView = findViewById(R.id.recyclerView);
     adapter = new TrackerAdapter(trackerStorage.trackerDataList, getSupportFragmentManager());
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));

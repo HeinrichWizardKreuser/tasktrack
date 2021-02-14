@@ -87,7 +87,6 @@ public class TrackerAdapter
     MainActivity.saveTrackerData();
   }
 
-
   @Override
   public void onRowSelected(ViewHolder myViewHolder) {
     myViewHolder.rowView.setBackgroundColor(Color.GRAY);
@@ -96,8 +95,9 @@ public class TrackerAdapter
   @Override
   public void onRowClear(ViewHolder myViewHolder) {
     myViewHolder.rowView.setBackgroundColor(Color.WHITE);
-
   }
+
+
 
 
 
@@ -106,7 +106,7 @@ public class TrackerAdapter
     return trackerDataList.size();
   }
 
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  public class ViewHolder extends RecyclerView.ViewHolder {
 
     View rowView;
     public TextView labelTextView;
@@ -154,6 +154,7 @@ public class TrackerAdapter
                   break;
                 }
                 case R.id.action_delete: {
+                  //int pos = trackerDataList.indexOf(trackerData);
                   boolean deleted = MainActivity.delete(trackerData);
                   if (deleted) {
                     Snackbar.make(v, "Deleted timer '" + trackerData.getDescription() + "'",
@@ -165,6 +166,9 @@ public class TrackerAdapter
                             Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                   }
+
+                  notifyDataSetChanged();
+                  //notifyItemRemoved(pos);
                   break;
                 }
                 case R.id.action_edit: {

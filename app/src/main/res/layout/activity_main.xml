@@ -26,7 +26,8 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             android:id="@+id/recyclerView"
-            tools:context="com.github.heinrichwizardkreuser.tasktrack.MainActivity">
+            tools:context="com.github.heinrichwizardkreuser.tasktrack.MainActivity"
+            android:background="@color/teal_200">
         </androidx.recyclerview.widget.RecyclerView>
 
     </com.google.android.material.appbar.AppBarLayout>
