@@ -6,8 +6,8 @@
     android:layout_height="?android:attr/listPreferredItemHeightLarge"
     android:background="@drawable/border">
 
-    <EditText
-        android:id="@+id/editText"
+    <TextView
+        android:id="@+id/labelTextView"
         android:layout_width="118dp"
         android:layout_height="51dp"
         android:layout_alignParentStart="true"
@@ -25,7 +25,7 @@
         android:background="@android:color/transparent"
         android:textColor="@android:color/background_dark"
         >
-    </EditText>
+    </TextView>
 
     <com.github.heinrichwizardkreuser.tasktrack.BetterChronometer
         android:id="@+id/chronometer"

@@ -30,7 +30,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
-//import android.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -48,12 +47,6 @@ public class TrackerAdapter
   private FragmentManager fragmentManager;
   private ArrayList<TrackerData> trackerDataList;
 
-  //// RecyclerView recyclerView;
-  //public TrackerAdapter(ArrayList<TrackerData> trackerDataList, FragmentManager fragmentManager) {
-  //  this.trackerDataList = trackerDataList;
-  //  this.fragmentManager = fragmentManager;
-  //}
-
   public TrackerAdapter(ArrayList<TrackerData> trackerDataList, FragmentManager fragmentManager) {
     this.trackerDataList = trackerDataList;
     this.fragmentManager = fragmentManager;
@@ -70,20 +63,13 @@ public class TrackerAdapter
   @Override
   public void onBindViewHolder(ViewHolder holder, int position) {
     final TrackerData myListData = trackerDataList.get(position);
-    holder.editText.setText(trackerDataList.get(position).getDescription());
+    holder.labelTextView.setText(trackerDataList.get(position).getDescription());
     holder.trackerData = myListData;
     holder.fragmentManager = this.fragmentManager;
     holder.chronometer.setCurrentTime(myListData.getElapsedTime());
-    holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        holder.editText.clearFocus();
-      }
-    });
   }
 
-
-  /*DRAG AND DROP*/
+  /***************************************DRAG AND DROP**************************************/
 
   @Override
   public void onRowMoved(int fromPosition, int toPosition) {
@@ -120,17 +106,12 @@ public class TrackerAdapter
     return trackerDataList.size();
   }
 
-  public static class ViewHolder
-          extends RecyclerView.ViewHolder
-          //implements EditTimeDialog.EditTimeListener
-  {
+  public static class ViewHolder extends RecyclerView.ViewHolder {
 
     View rowView;
-    //public ImageView imageView;
-    public EditText editText;
+    public TextView labelTextView;
     public TrackerData trackerData;
     public FragmentManager fragmentManager;
-    //public LinearLayout linearLayout;
     public RelativeLayout relativeLayout;
     public FloatingActionButton playButton;
     public FloatingActionButton options;
@@ -139,11 +120,12 @@ public class TrackerAdapter
     public ViewHolder(View itemView) {
       super(itemView);
       this.rowView = itemView;
-      this.editText = (EditText) itemView.findViewById(R.id.editText);
+      this.labelTextView = (TextView) itemView.findViewById(R.id.labelTextView);
       this.relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
       this.chronometer = (BetterChronometer)itemView.findViewById(R.id.chronometer);
       this.playButton = (FloatingActionButton)itemView.findViewById(R.id.fab_play);
       this.options = (FloatingActionButton)itemView.findViewById(R.id.fab_more_vert);
+      ViewHolder viewHolder = this;
       this.options.setOnClickListener(new View.OnClickListener() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
@@ -186,13 +168,10 @@ public class TrackerAdapter
                   break;
                 }
                 case R.id.action_edit: {
-
-                  EditTimeDialog dialog = new EditTimeDialog(chronometer);
+                  EditTimeDialog dialog = new EditTimeDialog(viewHolder);
                   dialog.show(fragmentManager, "");
-
                   break;
                 }
-
               }
               return false;
             }
@@ -223,42 +202,6 @@ public class TrackerAdapter
           }
         }
       });
-
-
-      //add listener to remove keyboard and cursor on action done
-      this.editText.setOnEditorActionListener(
-        new TextView.OnEditorActionListener() {
-        
-        @RequiresApi(api = Build.VERSION_CODES.M)
-        @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-          if (actionId == EditorInfo.IME_ACTION_DONE) {
-            // hide virtual keyboard
-            InputMethodManager imm = (InputMethodManager) v.getContext()
-              .getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-            editText.clearFocus();
-          }
-
-          // write to DB
-          //Toast.makeText(v.getContext(), editText.getText(),
-          //   Toast.LENGTH_LONG).show();
-          trackerData.setDescription(editText.getText().toString());
-
-          MainActivity.saveTrackerData();
-          return false;
-        }
-      });
     }
-    //
-    //@Override
-    //public void applyTimeTexts(String timeText) {
-    //  //TODO: check for format "HH:MM:SS.sss"
-    //  Snackbar.make(itemView,
-    //          timeText,
-    //          Snackbar.LENGTH_LONG)
-    //          .setAction("Action", null).show();
-    //}
-
   }
 }

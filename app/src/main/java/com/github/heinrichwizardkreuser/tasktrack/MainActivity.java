@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
   /******************************UPDATING TIME*********************************************/
 
   @Override
-  public void applyTimeTexts(String timeText, BetterChronometer chronometer) {
+  public void applyEditTexts(String timeText, String labelText, TrackerAdapter.ViewHolder viewHolder) {
     //TODO: check for format "HH:MM:SS.sss"
     char[] arr = timeText.toCharArray();
     // "HH:MM:SS.sss"
@@ -250,8 +250,14 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
     //        ": " + chronometer.getTimeElapsed() + "" +
     //        ": " + total);
 
-
-    chronometer.setCurrentTime(total);
+    // update the time
+    viewHolder.trackerData.setElapsedTime(total);
+    viewHolder.chronometer.setCurrentTime(total);
+    // update the label
+    viewHolder.trackerData.setDescription(labelText);
+    viewHolder.labelTextView.setText(labelText);
+    // write to database
+    saveTrackerData();
 
     Snackbar.make(recyclerView,
             "Updated Successfully",

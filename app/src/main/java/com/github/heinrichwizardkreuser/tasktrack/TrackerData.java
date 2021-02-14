@@ -23,9 +23,6 @@ public class TrackerData implements Serializable {
   public long getElapsedTime() { return elapsedTime; }
   public void setElapsedTime(long elapsedTime) { this.elapsedTime = elapsedTime; }
 
-  public void save() {
-  }
-
   private String id;
   public String id() { return id; }
 

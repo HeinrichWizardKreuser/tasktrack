@@ -23,13 +23,15 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class EditTimeDialog extends AppCompatDialogFragment {
 
-    private BetterChronometer chronometer;
+    //private BetterChronometer chronometer;
+    private TrackerAdapter.ViewHolder viewHolder;
     private EditText editTextTime;
+    private EditText editTextLabel;
     private EditTimeListener listener;
 
 
-    public EditTimeDialog(BetterChronometer chronometer) {
-        this.chronometer = chronometer;
+    public EditTimeDialog(TrackerAdapter.ViewHolder viewHolder) {
+        this.viewHolder = viewHolder;
     }
 
     @NonNull
@@ -43,12 +45,12 @@ public class EditTimeDialog extends AppCompatDialogFragment {
         builder.setView(view);
         builder.setTitle("Edit Time");
 
-
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
+                String labelText = editTextLabel.getText().toString();
                 String timeText = editTextTime.getText().toString();
-                listener.applyTimeTexts(timeText, chronometer);
+                listener.applyEditTexts(timeText, labelText, viewHolder);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -60,26 +62,15 @@ public class EditTimeDialog extends AppCompatDialogFragment {
             }
         });
 
+        editTextLabel = view.findViewById(R.id.edit_text_label);
+        editTextLabel.setText(this.viewHolder.labelTextView.getText());
+
         editTextTime = view.findViewById(R.id.edit_text_time);
-        editTextTime.setText(chronometer.getText().toString());
+        editTextTime.setText(this.viewHolder.chronometer.getText().toString());
 
 
         return builder.create();
     }
-
-    //@Override
-    //public void onAttach(@NonNull Activity activity) {
-    //    super.onAttach(activity);
-    //
-    //    Log.d("onAttach(activity)", "----------------------------");
-    //
-    //    try {
-    //        listener = (EditTimeListener) activity;
-    //    } catch (ClassCastException e) {
-    //        throw new ClassCastException(activity.toString() +
-    //                "must implement EditTimeListener");
-    //    }
-    //}
 
     @Override
     public void onAttach(Context context) {
@@ -93,6 +84,6 @@ public class EditTimeDialog extends AppCompatDialogFragment {
     }
 
     public interface EditTimeListener {
-        void applyTimeTexts(String timeText, BetterChronometer chronometer);
+        void applyEditTexts(String timeText, String labelText, TrackerAdapter.ViewHolder viewHolder);
     }
 }
