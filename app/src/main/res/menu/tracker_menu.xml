@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    <item
+        android:id="@+id/action_edit"
+        android:orderInCategory="100"
+        android:title="Edit"
+        />
+    <item
+        android:id="@+id/action_reset"
+        android:orderInCategory="100"
+        android:title="Reset"
+        />
+    <item
+        android:id="@+id/action_archive"
+        android:orderInCategory="100"
+        android:title="Archive"
+        />
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="100"
+        android:title="Delete"
+        />
+</menu>
