@@ -1,12 +1,14 @@
 package com.github.heinrichwizardkreuser.tasktrack;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.media.MediaParser;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
   public static Context appContext;
   private static TrackerStorage trackerStorage;
   public static TrackerAdapter adapter;
-  private static RecyclerView recyclerView;
+  public static RecyclerView recyclerView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
 
         //create a new tracker
         // iterate over all trackers and check if name is taken
-        int mx = 1;
+        int mx = 0;
         for (TrackerData trackerData : trackerStorage.trackerDataList) {
           String name = trackerData.getDescription();
           if (name.startsWith("Tracker ")) {
@@ -100,13 +102,45 @@ public class MainActivity extends AppCompatActivity implements EditTimeDialog.Ed
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+    /****************ARCHIVE SWIPE*****************/
     // add callback for drag and drop
-    ItemTouchHelper.Callback callback = new ItemMoveCallback(adapter);
+    ItemTouchHelper.Callback callback = new ItemMoveCallback(adapter) {
+      @Override
+      public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+
+        final int position = viewHolder.getAdapterPosition();
+        final TrackerData item = adapter.getData().get(position);
+
+        adapter.removeItem(position);
+
+
+        Snackbar snackbar = Snackbar
+                .make(recyclerView, "Item was removed from the list.", Snackbar.LENGTH_LONG);
+
+
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+
+            adapter.restoreItem(item, position);
+            recyclerView.scrollToPosition(position);
+          }
+        });
+
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
+
+      }
+    };
+
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
     touchHelper.attachToRecyclerView(recyclerView);
 
     recyclerView.setAdapter(adapter);
   }
+
+  /****************SETUP*****************/
 
   private void populate() {
     // delete the file

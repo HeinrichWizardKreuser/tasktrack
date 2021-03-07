@@ -99,6 +99,20 @@ public class TrackerAdapter
 
 
 
+  public void removeItem(int position) {
+    trackerDataList.remove(position);
+    notifyItemRemoved(position);
+  }
+
+  public void restoreItem(TrackerData item, int position) {
+    trackerDataList.add(position, item);
+    notifyItemInserted(position);
+  }
+
+  public ArrayList<TrackerData> getData() {
+    return trackerDataList;
+  }
+
 
 
   @Override
